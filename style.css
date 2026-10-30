@@ -158,7 +158,7 @@ input:focus { border-color: var(--inferno); }
 .row b { font: 700 18px var(--display); }
 .row span { font-size: 14px; font-weight: 400; color: var(--muted); }
 .row::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, var(--blood), var(--inferno)); opacity: 0; }
-.row.special::before, .row:hover::before { opacity: 1; }
+.row:hover::before { opacity: 1; }
 .row:hover:not(:disabled) { transform: none; box-shadow: none; background: rgba(255, 94, 0, .09); }
 
 /* Questions */
@@ -194,19 +194,6 @@ input:focus { border-color: var(--inferno); }
 .feedback.bad { border-color: #ff7a5c; }
 .hint { padding: 12px 14px; color: var(--ember); background: rgba(255, 94, 0, .1); border-radius: 10px; }
 
-/* Treasure bag */
-.setnote { margin: 0 0 6px; font: 800 clamp(28px, 6vw, 44px)/1.1 var(--display); }
-.tiles { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0; }
-.tile { width: 64px; height: 64px; padding: 0; font: 800 26px var(--display); }
-.tile.in { color: var(--obsidian); background: linear-gradient(135deg, var(--inferno), #FF8A3D); opacity: 1; }
-.tile.out { color: var(--text); background: var(--blood); text-decoration: line-through; opacity: 1; }
-.tile:disabled:not(.in):not(.out) { opacity: .4; }
-.bag {
-  display: inline-flex; align-items: center; justify-content: center; min-width: 160px; min-height: 76px;
-  padding: 12px 26px; border-radius: 999px; font: 700 22px var(--display);
-  box-shadow: inset 0 0 0 2px var(--inferno);
-}
-
 /* Results */
 .final { margin: 18px 0; padding: 0; list-style: none; }
 .final li { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--line); font: 700 20px var(--display); }
@@ -229,7 +216,6 @@ footer { flex: none; padding: 7px 14px; border-radius: 999px; font-size: 13px; t
 @media (max-width: 560px) {
   .levels { grid-template-columns: 1fr; }
   .hud .venn { width: 88px; }
-  .tile { width: 56px; height: 56px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -271,8 +257,6 @@ button.need { box-shadow: inset 0 0 0 2px var(--inferno); }
   .q { font-size: clamp(18px, 3.2vh, 24px); margin-bottom: 12px; }
   .answer { padding: 11px 14px; margin-bottom: 7px; }
   .feedback { margin: 8px 0; }
-  .tile { width: 52px; height: 52px; font-size: 22px; }
-  .bag { min-height: 56px; }
   h2 { margin-top: 12px; }
   .results h1 { font-size: clamp(30px, 6vh, 48px); }
   .final { margin: 8px 0; }

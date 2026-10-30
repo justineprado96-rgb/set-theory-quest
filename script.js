@@ -4,7 +4,7 @@ const root = document.querySelector(".game-container");
 const $ = id => document.getElementById(id);
 
 const state = { names: ["Player 1", "Player 2"], scores: [0, 0], turn: 0, difficulty: "Easy" };
-let quiz = null, bag = null, timerId = null, keyHandler = null, vennId = 0;
+let quiz = null, timerId = null, keyHandler = null, vennId = 0;
 
 // Counts are even so both players answer the same number of questions.
 const levels = {
@@ -12,7 +12,6 @@ const levels = {
   Medium: { seconds: 20, points: 20, count: 6 },
   Hard:   { seconds: 12, points: 30, count: 8 }
 };
-const BAG_MOVES = 3;
 
 const topicMeta = [
   { name: "Types of sets", note: "Finite, empty, equal and disjoint sets, plus the symbols" },
@@ -235,7 +234,6 @@ function showTopics() {
     <h1>Choose a topic</h1>
     <p class="lead">${esc(state.names[state.turn])}, you’re up. The turn passes to the other player after every question. Difficulty: ${state.difficulty}.</p>
     <div class="topic-list">
-      <button class="row special" data-topic="bag"><b>Treasure bag</b><span>Pick ${BAG_MOVES} of your 5 cards that belong to the target set</span></button>
       ${topicMeta.map((t, i) => `<button class="row" data-topic="${i}"><b>${t.name}</b><span>${t.note}</span></button>`).join("")}
     </div>
     <div class="actions">
@@ -244,64 +242,10 @@ function showTopics() {
     </div>
   `);
   root.querySelectorAll("[data-topic]").forEach(b => b.addEventListener("click", () => {
-    b.dataset.topic === "bag" ? startBag() : startTopic(Number(b.dataset.topic));
+    startTopic(Number(b.dataset.topic));
   }));
   click("changeLevel", showDifficulty);
   click("finish", showResults);
-}
-
-/* ---------- treasure bag ---------- */
-
-function startBag() {
-  const digits = shuffle([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  const target = digits.slice(0, 3 + Math.floor(Math.random() * 3)).sort((a, b) => a - b);
-  const inside = shuffle(target).slice(0, 2 + Math.floor(Math.random() * 2));
-  const outside = shuffle(digits.filter(n => !target.includes(n))).slice(0, 5 - inside.length);
-  bag = { target, cards: shuffle([...inside, ...outside]), picked: [], moves: BAG_MOVES, msg: "", kind: "" };
-  showBag();
-}
-
-function showBag() {
-  const done = bag.moves === 0;
-  const kept = bag.picked.filter(p => p.ok).map(p => p.n);
-  render(`
-    ${hud()}
-    <h1>Treasure bag</h1>
-    <p class="lead">${esc(state.names[state.turn])}, pick the cards that belong to this set. ${done ? "No picks left." : `You have ${bag.moves} ${bag.moves === 1 ? "pick" : "picks"} left.`}</p>
-    <p class="setnote">{${bag.target.join(", ")}}</p>
-    <div class="tiles">
-      ${bag.cards.map(n => {
-        const hit = bag.picked.find(p => p.n === n);
-        const cls = hit ? (hit.ok ? "in" : "out") : "ghost";
-        return `<button class="tile ${cls}" data-n="${n}" ${hit || done ? "disabled" : ""}>${n}</button>`;
-      }).join("")}
-    </div>
-    <h2>Your bag</h2>
-    <p class="bag">${kept.length ? `{${kept.join(", ")}}` : "Empty"}</p>
-    <p class="feedback ${bag.kind}" role="status">${bag.msg || "Pick a card."}</p>
-    <div class="actions">
-      ${done ? `<button id="bagDone">Back to topics</button>` : `<button class="ghost" id="bagLeave">Leave challenge</button>`}
-    </div>
-  `);
-  root.querySelectorAll(".tile:not(:disabled)").forEach(b => b.addEventListener("click", () => {
-    const n = Number(b.dataset.n);
-    const ok = bag.target.includes(n);
-    const pts = levels[state.difficulty].points;
-    bag.moves--;
-    bag.picked.push({ n, ok });
-    if (ok) {
-      state.scores[state.turn] += pts;
-      bag.msg = `${n} belongs to the set because it is listed in {${bag.target.join(", ")}}. +${pts} points.`;
-      bag.kind = "good";
-    } else {
-      bag.msg = `${n} is not in the set, because it is not listed in {${bag.target.join(", ")}}.`;
-      bag.kind = "bad";
-    }
-    showBag();
-    if (ok) spawnReward(`+${pts}`);
-  }));
-  if (done) click("bagDone", () => { state.turn = 1 - state.turn; showTopics(); });
-  else click("bagLeave", showTopics);
 }
 
 /* ---------- questions ---------- */

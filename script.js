@@ -466,7 +466,7 @@ function showResults() {
     <div class="results">
       ${venn(radius(a), radius(b), 0, "result-venn")}
       <h1>${tie ? "It’s a tie" : `${winner} wins!`}</h1>
-      <p class="lead">${tie ? "You’re both set enough for this duel!" : `${winner} is set enough for this duel!`}</p>
+      <p class="lead">${tie ? "Neither of you is set enough for this duel!" : `${winner} is set enough for this duel!`}</p>
       <ul class="final">
         <li><span>${esc(state.names[0])}</span><b>${a}</b></li>
         <li><span>${esc(state.names[1])}</span><b>${b}</b></li>

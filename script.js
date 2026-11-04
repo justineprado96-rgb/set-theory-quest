@@ -13,10 +13,12 @@ const levels = {
   Hard:   { seconds: 12, points: 30, count: 10 }
 };
 
+const PENALTY = 5; // points lost for a wrong pick
+
 const topicMeta = [
   { name: "Types of sets", note: "Finite, empty, equal and disjoint sets, plus the symbols" },
   { name: "Set operations", note: "Union, intersection, difference and complement" },
-  { name: "Binary addition and subtraction", note: "Add and subtract binary numbers, carrying and borrowing" },
+  { name: "Addition and subtraction in number systems", note: "Binary, octal, hexadecimal and decimal arithmetic" },
   { name: "Number system conversions", note: "Decimal, binary, octal and hexadecimal" },
   { name: "Boolean algebra", note: "Identity, complement, absorption and consensus laws" }
 ];
@@ -85,6 +87,21 @@ const topics = [
       { question: "What is 110₂ − 11₂?", choices: ["10₂", "11₂", "101₂"], answer: "11₂", explain: "110₂ is 6 and 11₂ is 3, so 6 − 3 = 3, which is 11₂. Check by adding back: 11₂ + 11₂ = 110₂." },
       { question: "What is 1010₂ − 101₂?", choices: ["100₂", "101₂", "111₂"], answer: "101₂", explain: "1010₂ is 10 and 101₂ is 5, so 10 − 5 = 5, which is 101₂. Check: 101₂ + 101₂ = 1010₂." },
       { question: "In binary subtraction, what do you do when a column needs 0 − 1?", choices: ["Borrow from the next column to the left", "Carry a 1 to the next column", "Skip the column"], answer: "Borrow from the next column to the left", explain: "You borrow from the next column on the left. The borrowed 1 is worth 2 in this column, so the 0 becomes 10₂ and 10₂ − 1₂ = 1₂." },
+      { question: "What is 5₈ + 3₈?", choices: ["7₈", "10₈", "11₈"], answer: "10₈", explain: "5 + 3 = 8 in decimal. Octal starts a new place at 8, so 8 is written 10₈: write 0 and carry 1." },
+      { question: "What is 27₈ + 16₈?", choices: ["43₈", "45₈", "53₈"], answer: "45₈", explain: "Right column: 7 + 6 = 13, which is one eight and 5 ones, so write 5 and carry 1. Left column: 2 + 1 + 1 = 4. The answer is 45₈ (decimal 23 + 14 = 37)." },
+      { question: "What is 10₈ − 1₈?", choices: ["1₈", "7₈", "11₈"], answer: "7₈", explain: "10₈ is 8 in decimal, and 8 − 1 = 7. In the column you borrow one eight, so 0 becomes 8 and 8 − 1 = 7." },
+      { question: "What is 52₈ − 17₈?", choices: ["33₈", "35₈", "43₈"], answer: "33₈", explain: "52₈ is 42 and 17₈ is 15, so 42 − 15 = 27, which is 33₈. The right column borrows one eight: 2 + 8 = 10, and 10 − 7 = 3. The left column is 5 − 1 (lent) − 1 = 3." },
+      { question: "In octal addition, what happens when a column adds up to 8 or more?", choices: ["Write the remainder and carry 1 to the next column", "Write 8 and keep going", "Carry 2 to the next column"], answer: "Write the remainder and carry 1 to the next column", explain: "Every place in octal is worth 8 times the one before it, so each 8 in a column becomes a carry of 1. The leftover stays in that column." },
+      { question: "What is 9₁₆ + 1₁₆?", choices: ["10₁₆", "A₁₆", "B₁₆"], answer: "A₁₆", explain: "9 + 1 = 10 in decimal. Hexadecimal has a single digit for ten, which is A, so no carry is needed yet." },
+      { question: "What is F₁₆ + 1₁₆?", choices: ["F₁₆", "10₁₆", "11₁₆"], answer: "10₁₆", explain: "F is 15, and 15 + 1 = 16. Hexadecimal starts a new place at 16, so the result is 10₁₆: write 0 and carry 1." },
+      { question: "What is 2A₁₆ + 15₁₆?", choices: ["3E₁₆", "3F₁₆", "40₁₆"], answer: "3F₁₆", explain: "Right column: A (10) + 5 = 15, which is F. Left column: 2 + 1 = 3. The answer is 3F₁₆ (decimal 42 + 21 = 63)." },
+      { question: "What is 1B₁₆ + 9₁₆?", choices: ["23₁₆", "24₁₆", "32₁₆"], answer: "24₁₆", explain: "B (11) + 9 = 20, which is one sixteen and 4 ones, so write 4 and carry 1. Then 1 + 1 = 2. The answer is 24₁₆ (decimal 27 + 9 = 36)." },
+      { question: "What is 10₁₆ − 1₁₆?", choices: ["1₁₆", "E₁₆", "F₁₆"], answer: "F₁₆", explain: "10₁₆ is 16 in decimal, and 16 − 1 = 15, which is F in hexadecimal." },
+      { question: "What is 3C₁₆ − 1F₁₆?", choices: ["1C₁₆", "1D₁₆", "2D₁₆"], answer: "1D₁₆", explain: "3C₁₆ is 60 and 1F₁₆ is 31, so 60 − 31 = 29, which is 1D₁₆. Right column: C (12) − F (15) needs a borrow, so 12 + 16 = 28 and 28 − 15 = 13 = D. Left column: 3 − 1 (lent) − 1 = 1." },
+      { question: "What is 47 + 38 in decimal?", choices: ["75", "85", "95"], answer: "85", explain: "7 + 8 = 15, so write 5 and carry 1. Then 4 + 3 + 1 = 8. The answer is 85." },
+      { question: "What is 256 + 189 in decimal?", choices: ["435", "445", "455"], answer: "445", explain: "6 + 9 = 15: write 5, carry 1. 5 + 8 + 1 = 14: write 4, carry 1. 2 + 1 + 1 = 4. The answer is 445." },
+      { question: "What is 82 − 37 in decimal?", choices: ["35", "45", "55"], answer: "45", explain: "2 − 7 needs a borrow, so 12 − 7 = 5. Then 8 − 1 (lent) − 3 = 4. The answer is 45." },
+      { question: "What is 500 − 276 in decimal?", choices: ["224", "234", "324"], answer: "224", explain: "Borrow across the zeros: 10 − 6 = 4, then 9 − 7 = 2, then 4 − 2 = 2. The answer is 224. Check: 224 + 276 = 500." },
     ]
   },
   {
@@ -127,7 +144,7 @@ const topics = [
 const topicLinks = [
   "https://en.wikipedia.org/wiki/Set_(mathematics)",
   "https://en.wikipedia.org/wiki/Algebra_of_sets",
-  "https://en.wikipedia.org/wiki/Binary_number",
+  "https://en.wikipedia.org/wiki/Numeral_system",
   "https://en.wikipedia.org/wiki/Numeral_system",
   "https://en.wikipedia.org/wiki/Boolean_algebra"
 ];
@@ -259,7 +276,7 @@ function showWelcome() {
   render(`
     ${venn(56, 56, 0, "hero-venn converge")}
     <h1>Mind Duel: Are You Set Enough?</h1>
-    <p class="lead">Two players, one screen. Answer questions on alternate turns and collect points. Scores stay hidden until the very end, so nobody knows who is winning until the duel is over.</p>
+    <p class="lead">Two players, one screen. Answer questions on alternate turns and collect points, but a wrong answer costs ${PENALTY} points. Scores stay hidden until the very end, so nobody knows who is winning until the duel is over.</p>
     <form id="nameForm">
       <label for="n1">First player</label>
       <input id="n1" maxlength="30" autocomplete="off" required value="${prefill(0)}">
@@ -267,7 +284,7 @@ function showWelcome() {
       <input id="n2" maxlength="30" autocomplete="off" required value="${prefill(1)}">
       <div class="actions"><button type="submit">Start the duel</button></div>
     </form>
-    <p class="muted" style="margin-top:22px">Covers types of sets, set operations, binary addition and subtraction, number system conversions (including octal) and Boolean algebra.</p>
+    <p class="muted" style="margin-top:22px">Covers types of sets, set operations, addition and subtraction in number systems, number system conversions (including octal) and Boolean algebra.</p>
   `);
   $("n1").focus();
   $("nameForm").addEventListener("submit", e => {
@@ -291,6 +308,7 @@ function showDifficulty() {
           <b>${name}</b>
           <small>${v.seconds} seconds per question</small>
           <small>${v.points} points per correct answer</small>
+          <small>-${PENALTY} points for a wrong pick</small>
           <small>${v.count} questions per topic</small>
         </button>`).join("")}
     </div>
@@ -376,7 +394,14 @@ function showQuestion() {
       if (pick) pick.classList.add("wrong");
       fb.textContent = `${timedOut ? "Time’s up." : "Not quite."} The answer is ${q.answer}.`;
       fb.className = "feedback bad";
-      if (timedOut) { spawnReward("Time’s up", "late"); sfx.timeout(); } else { sfx.wrong(); }
+      if (timedOut) {
+        spawnReward("Time’s up", "late");
+        sfx.timeout();
+      } else {
+        state.scores[state.turn] -= PENALTY;
+        spawnReward(`-${PENALTY} Wrong`, "late");
+        sfx.wrong();
+      }
     }
     const label = right ? "Why is this the answer?" : "See why";
     $("next").innerHTML = `
@@ -432,8 +457,9 @@ function showTopicDone() {
 
 function showResults() {
   const [a, b] = state.scores;
-  const top = Math.max(a, b, 1);
-  const radius = s => (a + b === 0 ? 48 : 26 + (44 * s) / top);
+  const low = Math.min(a, b, 0);
+  const span = Math.max(a, b) - low;
+  const radius = s => (span === 0 ? 48 : 26 + (44 * (s - low)) / span);
   const tie = a === b;
   const winner = esc(state.names[a > b ? 0 : 1]);
   render(`
